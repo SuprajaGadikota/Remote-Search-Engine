@@ -1,0 +1,291 @@
+        -:    0:Source:../src/server_functions.c
+        -:    0:Graph:server_functions.gcno
+        -:    0:Data:server_functions.gcda
+        -:    0:Runs:2
+        -:    1:#include <utility.h>
+        -:    2:
+        -:    3:char files[MAX][MAX];
+        -:    4:int count = 0;
+        -:    5:
+function read_data called 2 returned 100% blocks executed 71%
+        2:    6:int read_data(int sd, char buf[])
+        -:    7:{
+        2:    8:    int len = 0;
+        2:    9:    int ret = -1;
+        2:   10:    int bytes = 0;
+        -:   11:
+        2:   12:    ret = read(sd, &len, sizeof(int));
+call    0 returned 2
+        2:   13:    if (-1 == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+        -:   14:    {
+    #####:   15:        perror("\nREAD_DATA():READ ERROR!!!\n");
+call    0 never executed
+    #####:   16:        return FAILURE;
+        -:   17:    }
+        -:   18:
+        2:   19:    len = ntohs(len);
+        -:   20:
+        4:   21:    while (bytes < len)
+branch  0 taken 2
+branch  1 taken 2 (fallthrough)
+        -:   22:    {
+        2:   23:        ret = read(sd, (buf + bytes), (len - bytes));
+call    0 returned 2
+        2:   24:        if (-1 == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+        -:   25:        {
+    #####:   26:            perror("\nREAD_DATA():READ ERROR!!!\n");
+call    0 never executed
+    #####:   27:            return FAILURE;
+        -:   28:        }
+        2:   29:        bytes = bytes + ret;
+        -:   30:    }
+        -:   31:
+        2:   32:    buf[bytes + 1] = '\0';
+        2:   33:    return bytes;
+        -:   34:}
+        -:   35:
+function write_data called 0 returned 0% blocks executed 0%
+    #####:   36:int write_data(int sd, char buf[])
+        -:   37:{
+    #####:   38:    int len = 0;
+    #####:   39:    int ret = -1;
+    #####:   40:    int bytes = 0;
+    #####:   41:    int len2 = 0;
+        -:   42:
+    #####:   43:    len = strlen(buf);
+    #####:   44:    len2 = htons(len);
+        -:   45:
+    #####:   46:    ret = write(sd, &len2, sizeof(int));
+call    0 never executed
+    #####:   47:    if (-1 == ret)
+branch  0 never executed
+branch  1 never executed
+        -:   48:    {
+    #####:   49:        perror("\nWRITE_DATA(): READ ERROR!!!\n");
+call    0 never executed
+    #####:   50:        return FAILURE;
+        -:   51:    }
+        -:   52:
+    #####:   53:    while (bytes < len)
+branch  0 never executed
+branch  1 never executed
+        -:   54:    {
+    #####:   55:        ret = write(sd, (buf + bytes), (len - bytes));
+call    0 never executed
+    #####:   56:        if (-1 == ret)
+branch  0 never executed
+branch  1 never executed
+        -:   57:        {
+    #####:   58:            perror("\nWRITE_DATA(): WRITE ERROR!!!\n");
+call    0 never executed
+    #####:   59:            return FAILURE;
+        -:   60:        }
+    #####:   61:        bytes = bytes + ret;
+        -:   62:    }
+        -:   63:
+    #####:   64:    return bytes;
+        -:   65:}
+        -:   66:
+function search_word_in_file called 201 returned 100% blocks executed 86%
+      201:   67:int search_word_in_file(char *fname, char *str)
+        -:   68:{
+        -:   69:    FILE *fp;
+        -:   70:    char temp[MAX];
+        -:   71:
+      201:   72:    if ((fp = fopen(fname, "r")) == NULL)
+call    0 returned 201
+branch  1 taken 0 (fallthrough)
+branch  2 taken 201
+        -:   73:    {
+    #####:   74:        perror("\nSEARCH_WORD_IN_FILE:FILE NOT FOUND\n");
+call    0 never executed
+    #####:   75:        return FAILURE;
+        -:   76:    }
+        -:   77:
+    62871:   78:    while (fgets(temp, MAX, fp) != NULL)
+call    0 returned 62871
+branch  1 taken 62692
+branch  2 taken 179 (fallthrough)
+        -:   79:    {
+    62692:   80:        if ((strstr(temp, str)) != NULL)
+branch  0 taken 22 (fallthrough)
+branch  1 taken 62670
+        -:   81:        {
+        -:   82:            // printf("COMPARED\n");
+       22:   83:            return SUCCESS;
+        -:   84:        }
+        -:   85:    }
+        -:   86:
+        -:   87:    // Close the file if still open.
+      179:   88:    if (fp)
+branch  0 taken 179 (fallthrough)
+branch  1 taken 0
+        -:   89:    {
+      179:   90:        fclose(fp);
+call    0 returned 179
+        -:   91:    }
+      179:   92:    return 1;
+        -:   93:}
+        -:   94:
+function list_files_recursively called 79 returned 100% blocks executed 90%
+       79:   95:int list_files_recursively(int fd, const char *dirname, char *str)
+        -:   96:{
+       79:   97:    DIR *dir = opendir(dirname);
+call    0 returned 79
+        -:   98:
+       79:   99:    if (dir == NULL)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 79
+        -:  100:    {
+    #####:  101:        perror("\nLIST_FILES_REC: ERROR OPENING DIRECTORY\n");
+call    0 never executed
+    #####:  102:        return FAILURE;
+        -:  103:    }
+        -:  104:
+        -:  105:    struct dirent *entity; // it can be file or directory
+       79:  106:    entity = readdir(dir);
+call    0 returned 79
+        -:  107:
+      516:  108:    while (entity != NULL)
+branch  0 taken 437
+branch  1 taken 79 (fallthrough)
+        -:  109:    {
+      437:  110:        char path[MAX] = {0};
+        -:  111:
+      437:  112:        strcat(path, dirname);
+      437:  113:        strcat(path, "/");
+      437:  114:        strcat(path, entity->d_name);
+        -:  115:
+      437:  116:        if (entity->d_type == DT_REG)
+branch  0 taken 201 (fallthrough)
+branch  1 taken 236
+        -:  117:        {
+      201:  118:            if (search_word_in_file(path, str) == SUCCESS)
+call    0 returned 201
+branch  1 taken 22 (fallthrough)
+branch  2 taken 179
+        -:  119:            {
+        -:  120:                // printf("%s\n",path);
+       22:  121:                strcpy(files[count], path);
+       22:  122:                count++;
+        -:  123:                char w_file[MAX];
+       22:  124:                sprintf(w_file, "%d", count);
+       22:  125:                strcat(w_file, "\t\t");
+       22:  126:                strcat(w_file, entity->d_name);
+       22:  127:                strcat(w_file, "\t\t");
+       22:  128:                strcat(w_file, path);
+       22:  129:                strcat(w_file, "\n");
+        -:  130:                // w_file[strlen(w_file)] = '\0';
+       22:  131:                write(fd, w_file, strlen(w_file));
+call    0 returned 22
+        -:  132:            }
+        -:  133:        }
+        -:  134:
+      437:  135:        if (entity->d_type == DT_DIR && strcmp(entity->d_name, ".") != 0 && strcmp(entity->d_name, "..") != 0)
+branch  0 taken 236 (fallthrough)
+branch  1 taken 201
+branch  2 taken 157 (fallthrough)
+branch  3 taken 79
+branch  4 taken 78 (fallthrough)
+branch  5 taken 79
+        -:  136:        {
+       78:  137:            list_files_recursively(fd, path, str);
+call    0 returned 78
+        -:  138:        }
+        -:  139:
+      437:  140:        entity = readdir(dir);
+call    0 returned 437
+        -:  141:    }
+        -:  142:
+       79:  143:    closedir(dir);
+call    0 returned 79
+       79:  144:    return SUCCESS;
+        -:  145:}
+        -:  146:
+function read_contents called 3 returned 100% blocks executed 82%
+        3:  147:char *read_contents(char *buffer, char *file)
+        -:  148:{
+        -:  149:    int c;
+        -:  150:    FILE *fp;
+        3:  151:    printf("%s\n", file);
+call    0 returned 3
+        -:  152:
+        3:  153:    if ((fp = fopen(file, "r")) == NULL)
+call    0 returned 3
+branch  1 taken 0 (fallthrough)
+branch  2 taken 3
+        -:  154:    {
+    #####:  155:        perror("\nREAD_CONTENTS: FILE NOT FOUND\n");
+call    0 never executed
+    #####:  156:        exit(FAILURE);
+call    0 never executed
+        -:  157:    }
+        -:  158:
+        3:  159:    long int res = findSize(file);
+call    0 returned 3
+        3:  160:    printf("res is %ld\n", res);
+call    0 returned 3
+     3316:  161:    for (int i = 0; i < res; ++i)
+branch  0 taken 3313
+branch  1 taken 3 (fallthrough)
+        -:  162:    {
+     3313:  163:        c = getc(fp);
+call    0 returned 3313
+     3313:  164:        if (c == EOF)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 3313
+        -:  165:        {
+    #####:  166:            buffer[i] = 0x00;
+    #####:  167:            break;
+        -:  168:        }
+     3313:  169:        buffer[i] = c;
+        -:  170:    }
+        -:  171:
+        3:  172:    buffer[res + 1] = '\0';
+        3:  173:    printf("%ld\n", strlen(buffer));
+call    0 returned 3
+        3:  174:    fclose(fp);
+call    0 returned 3
+        3:  175:    return buffer;
+        -:  176:}
+        -:  177:
+function read_file_contents called 1 returned 100% blocks executed 100%
+        1:  178:char *read_file_contents(char file_contents[], int num)
+        -:  179:{
+        -:  180:    char file_name[MAX];
+        1:  181:    strcpy(file_name, files[num]);
+        1:  182:    strcpy(file_contents, read_contents(file_contents, file_name));
+call    0 returned 1
+        1:  183:    return file_contents;
+        -:  184:}
+        -:  185:
+function findSize called 3 returned 100% blocks executed 88%
+        3:  186:long int findSize(char file_name[])
+        -:  187:{
+        3:  188:    FILE *fp = fopen(file_name, "r");
+call    0 returned 3
+        -:  189:
+        3:  190:    if (fp == NULL)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 3
+        -:  191:    {
+    #####:  192:        printf("\nFINDSIZE(): FILE NOT FOUND!\n");
+call    0 never executed
+        -:  193:        //return -1;
+        -:  194:    }
+        -:  195:
+        3:  196:    fseek(fp, 0L, SEEK_END);
+call    0 returned 3
+        -:  197:
+        3:  198:    long int res = ftell(fp);
+call    0 returned 3
+        -:  199:
+        3:  200:    fclose(fp);
+call    0 returned 3
+        -:  201:
+        3:  202:    return res;
+        -:  203:}

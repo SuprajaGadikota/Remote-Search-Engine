@@ -1,0 +1,88 @@
+        -:    0:Source:../src/client_functions.c
+        -:    0:Graph:client_functions.gcno
+        -:    0:Data:client_functions.gcda
+        -:    0:Runs:2
+        -:    1:#include <utility.h>
+        -:    2:
+function read_data called 0 returned 0% blocks executed 0%
+    #####:    3:int read_data(int sd, char buf[])
+        -:    4:{
+    #####:    5:    int len = 0;
+    #####:    6:    int ret = -1;
+    #####:    7:    int bytes = 0;
+        -:    8:
+    #####:    9:    ret = read(sd, &len, sizeof(int));
+call    0 never executed
+    #####:   10:    if (-1 == ret)
+branch  0 never executed
+branch  1 never executed
+        -:   11:    {
+    #####:   12:        perror("\n READ ERROR!!!\n");
+call    0 never executed
+    #####:   13:        return FAILURE;
+        -:   14:    }
+        -:   15:
+    #####:   16:    len = ntohs(len);
+        -:   17:
+    #####:   18:    while (bytes < len)
+branch  0 never executed
+branch  1 never executed
+        -:   19:    {
+    #####:   20:        ret = read(sd, (buf + bytes), (len - bytes));
+call    0 never executed
+    #####:   21:        if (-1 == ret)
+branch  0 never executed
+branch  1 never executed
+        -:   22:        {
+    #####:   23:            perror("\n READ ERROR!!!\n");
+call    0 never executed
+    #####:   24:            return FAILURE;
+        -:   25:        }
+    #####:   26:        bytes = bytes + ret;
+        -:   27:    }
+        -:   28:
+    #####:   29:    buf[bytes + 1] = '\0';
+    #####:   30:    return bytes;
+        -:   31:}
+        -:   32:
+function write_data called 2 returned 100% blocks executed 71%
+        2:   33:int write_data(int sd, char buf[])
+        -:   34:{
+        2:   35:    int len = 0;
+        2:   36:    int ret = -1;
+        2:   37:    int bytes = 0;
+        2:   38:    int len2 = 0;
+        -:   39:
+        2:   40:    len = strlen(buf);
+        2:   41:    len2 = htons(len);
+        -:   42:
+        2:   43:    ret = write(sd, &len2, sizeof(int));
+call    0 returned 2
+        2:   44:    if (-1 == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+        -:   45:    {
+    #####:   46:        perror("\n READ ERROR!!!\n");
+call    0 never executed
+    #####:   47:        return FAILURE;
+        -:   48:    }
+        -:   49:
+        4:   50:    while (bytes < len)
+branch  0 taken 2
+branch  1 taken 2 (fallthrough)
+        -:   51:    {
+        2:   52:        ret = write(sd, (buf + bytes), (len - bytes));
+call    0 returned 2
+        2:   53:        if (-1 == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+        -:   54:        {
+    #####:   55:            perror("\n WRITE ERROR!!!\n");
+call    0 never executed
+    #####:   56:            return FAILURE;
+        -:   57:        }
+        2:   58:        bytes = bytes + ret;
+        -:   59:    }
+        -:   60:
+        2:   61:    return bytes;
+        -:   62:}

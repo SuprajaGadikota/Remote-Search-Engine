@@ -1,0 +1,393 @@
+        -:    0:Source:../src/client.c
+        -:    0:Graph:client.gcno
+        -:    0:Data:client.gcda
+        -:    0:Runs:2
+        -:    1:/******************************************************************************************
+        -:    2: *
+        -:    3: *                                       HEADER FILES
+        -:    4: *
+        -:    5: ****************************************************************************************************/
+        -:    6:#include <utility.h>
+        -:    7:#include <signal.h>
+        -:    8:#define STRING_CHOICE '1'
+        -:    9:#define PATH_CHOICE '2'
+        -:   10:#define EXIT_CHOICE '3'
+        -:   11:
+        -:   12:
+        -:   13:/*****************************************************************************************************
+        -:   14: *
+        -:   15: *       FUNCTION NAME : main()
+        -:   16: *       DESCRIPTION : It is client side main function. 
+        -:   17: *       RETURNS : SUCCESS OR FAILURE
+        -:   18: *
+        -:   19: ****************************************************************************************************/
+        -:   20:int sd = -1;
+        -:   21:
+function ClientSignalHandler called 0 returned 0% blocks executed 0%
+    #####:   22:void ClientSignalHandler(int sig){
+    #####:   23:	printf("Recived Signal\nwith id : %d\n", sig);
+call    0 never executed
+    #####:   24:	close(sd);
+call    0 never executed
+    #####:   25:	exit(sig);
+        -:   26:}
+        -:   27:
+        -:   28:
+function main called 2 returned 50% blocks executed 61%
+        2:   29:int main(int argc, char *argv[])
+        -:   30:{
+        2:   31:	signal(SIGINT, ClientSignalHandler);
+call    0 returned 2
+       2*:   32:    if((argc != 3 || argc != 4) && (argc >4))
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+branch  2 never executed
+branch  3 never executed
+branch  4 taken 0 (fallthrough)
+branch  5 taken 2
+        -:   33:    {
+    #####:   34:	perror("Invalid number of Arguments! Please Enter valid number of arguments...\n");
+call    0 never executed
+    #####:   35:	return FAILURE;
+        -:   36:    }
+        -:   37:
+        -:   38:    struct sockaddr_in server;
+        -:   39:    //int sd = -1;
+        2:   40:    int connfd = -1;
+        2:   41:    int ret = -1;
+        -:   42:    char buf[100000];
+        -:   43:    char fileC[1000000];
+        -:   44:    char file_contents[100000];
+        -:   45:    char y_or_n;
+        -:   46:
+        -:   47:/***********************************************************************************************************************************************************     Creating the TCP client socket with Family --> AF_INET, Connection-based protocol SOCK_STREAM .
+        -:   48:    The socket function return -1 if socket is not created.
+        -:   49:    Returns some positive number if socket is created successfully. 
+        -:   50:***********************************************************************************************************************************************************/
+        -:   51:
+        2:   52:    sd = socket(AF_INET, SOCK_STREAM, 0);
+call    0 returned 2
+        -:   53:
+        -:   54:/*  Checking wheather socket is created or not.
+        -:   55:    If sd == -1 it prints an error message and returns FAILURE. */
+        -:   56:
+        2:   57:    if (-1 == sd)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+        -:   58:    {
+    #####:   59:        perror("\nCLIENT: SOCKET ERROR!!!\n");
+call    0 never executed
+    #####:   60:        return FAILURE;
+        -:   61:    }
+        -:   62:
+        2:   63:    memset(&server, 0, sizeof(server));
+        2:   64:    server.sin_family = AF_INET;
+        2:   65:    server.sin_port = htons(atoi(argv[2]));
+        -:   66:    
+        -:   67:/***********************************************************************************************************************************************************     Connect() is used to connect the socket to a server socket. 
+        -:   68:    It takes the arguments socket descriptor, address, and sizeof the structure we defined. 
+        -:   69:    Returns -1 if Connection is not done. 
+        -:   70:    Returns some positive value when connection is done properly.  
+        -:   71:***********************************************************************************************************************************************************/
+        -:   72:
+        2:   73:    connfd = connect(sd, (struct sockaddr *)&server, sizeof(server));
+call    0 returned 2
+        -:   74:
+        -:   75:/*  If return value of connect is -1, print error message. */
+        -:   76:
+        2:   77:    if (-1 == connfd)
+branch  0 taken 1 (fallthrough)
+branch  1 taken 1
+        -:   78:    {
+        1:   79:        perror("\nCLIENT: CONNECTION ERROR!!\n");
+call    0 returned 1
+        1:   80:	close(sd);
+call    0 returned 1
+        1:   81:        return FAILURE;
+        -:   82:    }
+        -:   83:/***********************************************************************************************************************************************************     Checking Whether There is a Path mentioned by the user as a third argument or not. 
+        -:   84:    If Path is present then send that path to the server using send function. 
+        -:   85:    send() takes 4 arguments, socket description, char *, sizeof char *, type. 
+        -:   86:***********************************************************************************************************************************************************/
+        -:   87:    
+        1:   88:    if(argv[3]){                        //checking if there is any user given path -RES1
+branch  0 taken 1 (fallthrough)
+branch  1 taken 0
+        1:   89:    	send(sd, argv[3], MAX, 0); 
+call    0 returned 1
+        -:   90:    }
+        -:   91:    
+        -:   92:    else{
+    #####:   93:    	send(sd, "/home/", MAX, 0);
+call    0 never executed
+        -:   94:    }
+        -:   95:    
+        -:   96:/***********************************************************************************************************************************************************     Menu Driven Interface. 
+        -:   97:    Asks The user to select one option from the three mentioned below. 
+        -:   98:    1. Search a String. 
+        -:   99:    2. Search by Path. 
+        -:  100:    3. Exit. 
+        -:  101:
+        -:  102:    If Option '1' is Selected, User will be asked to Enter a String. 
+        -:  103:    If no file Contains the String, it display a message "No Entry of the String ".  
+        -:  104:    Else all the Files are Displayed to the user along with the Path where they are present. 
+        -:  105:    Then user will be asked whether they want to see the contents of the File or not. 
+        -:  106:    If user want to see the contents of a Particular file, he needs to enter 'Y', else 'N'. 
+        -:  107:    If 'Y', Then user will be asked to enter the File number. And then it's contents are displayed. 
+        -:  108:    Again user will be asked whether they want to continue or not. 
+        -:  109:    If 'N', then the Options will be Displayed again. 
+        -:  110:
+        -:  111:    If Option '2' is Selected, User will be asked to enter the file name and absolute path. 
+        -:  112:    If the File exists, it will Display the Contents of the File. 
+        -:  113:    Else a message is Displayed saying The File does not exits. 
+        -:  114:    The Options will be Displayed again. 
+        -:  115:
+        -:  116:    If Option '3' is Selected, The program will be Stopped.
+        -:  117:***********************************************************************************************************************************************************/
+        -:  118:    while (1)
+        2:  119:    {
+        3:  120:    	system("clear");
+call    0 returned 3
+        -:  121:
+        -:  122:
+        3:  123:    	printf("**********************************************\n");
+call    0 returned 3
+        3:  124:    	printf("     WELCOME TO REMOTE SEARCH ENGINE          \n");
+call    0 returned 3
+        3:  125:    	printf("**********************************************\n\n");
+call    0 returned 3
+        3:  126:        printf("\n1.Search by String. \n2.Search by PATH. \n3.EXIT. \nEnter your choice: "); //menu driven interface
+call    0 returned 3
+        -:  127:        char choice;
+        3:  128:        scanf(" %c", &choice); //taking user choice of searching
+call    0 returned 3
+        3:  129:        getchar();
+call    0 returned 3
+        3:  130:        if(choice=='1'||choice=='2'||choice=='3')
+branch  0 taken 2 (fallthrough)
+branch  1 taken 1
+branch  2 taken 1 (fallthrough)
+branch  3 taken 1
+branch  4 taken 1 (fallthrough)
+branch  5 taken 0
+        2:  131:        {
+        3:  132:        	char choice_buf[2] = {choice, '\0'};   
+        3:  133:        	ret = send(sd, choice_buf, sizeof(choice_buf), 0);
+call    0 returned 3
+        3:  134:        	if (FAILURE == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 3
+        -:  135:        	{
+    #####:  136:            		perror("\nCLIENT: ERROR IN WRITING OPTION!!!\n");
+call    0 never executed
+    #####:  137:            		return FAILURE;
+        -:  138:        	}
+        -:  139:        	char search[MAX],file_search[MAX];
+        3:  140:        	fflush(NULL);
+call    0 returned 3
+        -:  141:        
+        3:  142:        	if (choice == STRING_CHOICE)                                          //RSE 2 and 4
+branch  0 taken 1 (fallthrough)
+branch  1 taken 2
+        -:  143:        	{
+        1:  144:            	printf("Please enter string/word/sentence to search: "); //passing string for searching
+call    0 returned 1
+        1:  145:            	fgets(search, sizeof(search), stdin);
+call    0 returned 1
+        1:  146:            	search[strcspn(search, "\n")] = 0;
+        1:  147:            	search[strlen(search)] = '\0';
+        1:  148:            	ret = write_data(sd, search);
+call    0 returned 1
+        1:  149:            	if (FAILURE == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+        -:  150:            	{
+    #####:  151:                	perror("\nCLIENT: ERROR IN WRITING SEARCH!!!\n");
+call    0 never executed
+    #####:  152:					close(sd);
+call    0 never executed
+    #####:  153:                	return FAILURE;
+        -:  154:            	}
+        -:  155:
+        1:  156:            	ret = read(sd, &buf, sizeof(buf));
+call    0 returned 1
+        1:  157:            	if (-1 == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+        -:  158:            	{
+    #####:  159:                	perror("\nCLIENT: ERROR IN READING BUFF(FILE NAMES)!!\n");
+call    0 never executed
+    #####:  160:					close(sd);
+call    0 never executed
+    #####:  161:                	return FAILURE;
+        -:  162:            	}
+        1:  163:            	if(strcmp("-1", buf) == 0){
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    #####:  164:            		printf("No Entry of the String\n");
+call    0 never executed
+    #####:  165:            		printf("Continue? [y/n]\n");      //checking if user wants to continue
+call    0 never executed
+    #####:  166:        		scanf(" %c", &y_or_n);
+call    0 never executed
+    #####:  167:        		if(y_or_n == 'n'){
+branch  0 never executed
+branch  1 never executed
+    #####:  168:        			send(sd, "3", sizeof("3"), 0);
+call    0 never executed
+    #####:  169:        			break;
+        -:  170:        		}
+        -:  171:        		else{
+    #####:  172:        			continue;
+        -:  173:        		}
+        -:  174:            	}
+        1:  175:            	printf("\nfiles are:\n");
+call    0 returned 1
+        1:  176:            	printf("%s\n", buf);
+call    0 returned 1
+        -:  177:            
+        1:  178:            	printf("View Contents of File? [y/n]\n");
+call    0 returned 1
+        1:  179:            	scanf(" %c", &y_or_n);
+call    0 returned 1
+        -:  180:            	char fileNum[5];
+       1*:  181:            	if(y_or_n=='y'||y_or_n=='Y'||y_or_n=='n'||y_or_n=='N')
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+        -:  182:            	{
+       1*:  183:            		if(y_or_n == 'y' || y_or_n == 'Y'){
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+branch  2 never executed
+branch  3 never executed
+        1:  184:            			printf("Enter the file number: "); //showing the content according to the input number
+call    0 returned 1
+        1:  185:            			scanf("%s", fileNum);
+call    0 returned 1
+        1:  186:            			ret = send(sd, fileNum, sizeof(fileNum), 0);
+call    0 returned 1
+        1:  187:            		if (FAILURE == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+        -:  188:            		{
+    #####:  189:                		perror("\nCLIENT: ERROR IN WRITING FILE NUMBER!!!\n");
+call    0 never executed
+    #####:  190:						close(sd);
+call    0 never executed
+    #####:  191:                		return FAILURE;
+        -:  192:            		}
+        1:  193:            		ret = read(sd, &file_contents, sizeof(buf));
+call    0 returned 1
+        1:  194:            		if (-1 == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+        -:  195:            		{
+    #####:  196:                		perror("\nCLIENT: ERROR IN READING FILE CONTENTS!!\n");
+call    0 never executed
+    #####:  197:				close(sd);
+call    0 never executed
+    #####:  198:                		return FAILURE;
+        -:  199:            		}
+        1:  200:            		printf("\n files contents are: %s\n", file_contents);        //showing file Contents
+call    0 returned 1
+        -:  201:            
+        -:  202:            		}
+        -:  203:            	else{
+    #####:  204:            		send(sd, "0", sizeof("0"), 0);
+call    0 never executed
+        -:  205:            	}
+        1:  206:            	bzero(search,sizeof(search));
+        1:  207:            	bzero(buf,sizeof(buf));
+        1:  208:            	bzero(fileNum,sizeof(fileNum));
+        1:  209:            	bzero(file_contents,sizeof(file_contents));
+        -:  210:            }
+        -:  211:            else
+        -:  212:            {
+    #####:  213:            	printf("enter a valid choice\n");
+call    0 never executed
+        -:  214:            }
+        -:  215:
+        -:  216:        }
+        -:  217:
+        2:  218:        else if (choice == PATH_CHOICE)
+branch  0 taken 1 (fallthrough)
+branch  1 taken 1
+        -:  219:        {
+        1:  220:            printf("Enter file name:");
+call    0 returned 1
+        1:  221:            fgets(file_search, sizeof(file_search), stdin); //taking absolute path rse3
+call    0 returned 1
+        1:  222:            file_search[strcspn(file_search, "\n")] = 0;
+        1:  223:            file_search[strlen(file_search)] = '\0';
+        1:  224:            printf("File name:%s", file_search);  
+call    0 returned 1
+        1:  225:            ret = write_data(sd, file_search);
+call    0 returned 1
+        1:  226:            if (FAILURE == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+        -:  227:            {
+    #####:  228:                perror("\nCLIENT: ERROR IN WRITING SEARCH(FILENAME)!!!\n");
+call    0 never executed
+    #####:  229:                close(sd);
+call    0 never executed
+    #####:  230:		return FAILURE;
+        -:  231:            }
+        1:  232:            memset(&fileC, 0, sizeof(fileC));
+        1:  233:            ret = recv(sd, &fileC, sizeof(fileC), 0);
+call    0 returned 1
+        1:  234:            if (-1 == ret)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+        -:  235:            {
+    #####:  236:                perror("\nCLIENTERROR IN READING FILE CONTENTS!!\n");
+call    0 never executed
+    #####:  237:		close(sd);
+call    0 never executed
+    #####:  238:                return FAILURE;
+        -:  239:            }
+        1:  240:            printf("\nFiles contents are: %s\n", fileC);
+call    0 returned 1
+        1:  241:            bzero(file_search,sizeof(file_search));
+        1:  242:            bzero(fileC,sizeof(fileC));
+        -:  243:        }
+        -:  244:
+        1:  245:        else if (choice == EXIT_CHOICE)
+branch  0 taken 1 (fallthrough)
+branch  1 taken 0
+        -:  246:        {
+        1:  247:            exit(EXIT_SUCCESS);
+call    0 returned 0
+        -:  248:        }
+        -:  249:        }
+        -:  250:        else
+        -:  251:        {
+    #####:  252:            printf("Enter valid option\n");
+call    0 never executed
+        -:  253:        }
+        2:  254:        printf("Continue? [y/n]\n");
+call    0 returned 2
+        2:  255:        scanf(" %c", &y_or_n);
+call    0 returned 2
+        2:  256:        printf("Exiting from the Search engine! \n");
+call    0 returned 2
+        2:  257:        if(y_or_n == 'n'){
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+    #####:  258:        	send(sd, "3", sizeof("3"), 0);  //exiting file
+call    0 never executed
+    #####:  259:        	break;
+        -:  260:        }
+        2:  261:        fflush(NULL);
+call    0 returned 2
+        -:  262:    }
+    #####:  263:    close(sd);
+call    0 never executed
+    #####:  264:    return SUCCESS;
+        -:  265:}

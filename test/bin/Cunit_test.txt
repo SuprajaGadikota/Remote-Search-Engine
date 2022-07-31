@@ -1,0 +1,84 @@
+
+
+     CUnit - A unit testing framework for C - Version 2.1-3
+     http://cunit.sourceforge.net/
+
+
+Suite: RSE DIR SUITE
+  Test: RSE_DIR_TEST_1 ...
+Path: /home/supraja/Documents/, opened successfull
+passed
+  Test: RSE_DIR_TEST_2 ...
+Path Cannot open /home/supaj/,test case passedpassed
+  Test: RSE_DIR_TEST_2 ...
+Path: /home/supraja/Desktop/RSE/, opened successfull
+passed
+Suite: RSE FILE SUITE
+  Test: RSE_FILE_TEST_1 ...
+File /home/supraja/Documents/LSI.py, opened successfully
+passed
+  Test: RSE_FILE_TEST_2 ...
+File /home/supraja/Documents/abc.py, cannot open 
+passed
+  Test: RSE_FILE_TEST_2 ...
+File /home/supraja/Desktop/RSE/server.c, cannot open 
+passed
+Suite: RSE WORD SEARCH SUITE
+  Test: RSE_WORD_SEARCH_TEST_1 ...
+Word found! Test Case Passed
+passed
+  Test: RSE_WORD_SEARCH_TEST_2 ...
+Word found! Test Case Passed
+passed
+  Test: RSE_WORD_SEARCH_TEST_3 ...
+Word o file Not found! Test Case Passed
+passed
+  Test: RSE_WORD_SEARCH_TEST_4 ...
+Word or file not found! Test Case Passed
+passed
+  Test: RSE_WORD_SEARCH_TEST_5 ...
+Word or file not found! Test Case Passed
+passed
+Suite: RSE FIND SIZE SUITE
+  Test: RSE_FIND_SIZE_TEST_1 ...
+test case passed
+passed
+  Test: RSE_FIND_SIZE_TEST_2 ...
+Test case passed
+passed
+  Test: RSE_FIND_SIZE_TEST_3 ...
+test case passed
+passed
+  Test: RSE_FIND_SIZE_TEST_4 ...
+test case passed
+passed
+  Test: RSE_FIND_SIZE_TEST_5 ...
+test case passed
+passed
+Suite: RSE READ CONTENTS SUITE
+  Test: RSE_READ_CONTENTS_TEST_1 ...
+test case passed
+passed
+  Test: RSE_READ_CONTENTS_TEST_2 ...
+Test case passed
+passed
+  Test: RSE_READ_CONTENTS_TEST_3 ...
+test case passed
+passed
+Suite: RSE LIST RECCURSIVE SUITE
+  Test: RSE_LIST_RECURSIVE_TEST_1 ...
+ Function passed
+passed
+  Test: RSE_LIST_RECURSIVE_TEST_2 ...
+ Function passed
+passed
+  Test: RSE_LIST_RECURSIVE_TEST_3 ...
+ Function passed
+passed
+
+Run Summary:    Type  Total    Ran Passed Failed Inactive
+              suites      6      6    n/a      0        0
+               tests     22     22     22      0        0
+             asserts     22     22     22      0      n/a
+
+Elapsed time =    0.043 seconds

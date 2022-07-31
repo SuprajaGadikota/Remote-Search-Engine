@@ -1,0 +1,37 @@
+1		client.c		/home/supraja/Documents/sprint/Remote_search_engine/RSEc/src/client.c
+2		server.c		/home/supraja/Documents/sprint/Remote_search_engine/RSEc/src/server.c
+3		client.c.gcov		/home/supraja/Documents/sprint/Remote_search_engine/RSEc/bin/gcov/client.c.gcov
+4		server.c.gcov		/home/supraja/Documents/sprint/Remote_search_engine/RSEc/bin/gcov/server.c.gcov
+5		test.c		/home/supraja/Documents/sprint/Remote_search_engine/RSEc/test/test.c
+6		lfr.c		/home/supraja/Documents/sprint/lfr.c
+7		list_files_recursive.c		/home/supraja/Documents/sprint/list_files_recursive.c
+8		server.c		/home/supraja/Documents/practice/tcp/server.c
+9		mmap.c		/home/supraja/Documents/practice/shared_memory/mmap.c
+10		shared_memory.c		/home/supraja/Documents/practice/shared_memory/shared_memory.c
+11		shm_writer.c		/home/supraja/Documents/practice/shared_memory/shm_writer.c
+12		shm_reader.c		/home/supraja/Documents/practice/shared_memory/shm_reader.c
+13		message.c		/home/supraja/Documents/practice/message.c
+14		sharedMemWriter.c		/home/supraja/Documents/practice/mmaps/sharedMemWriter.c
+15		mmapOne.c		/home/supraja/Documents/practice/mmaps/mmapOne.c
+16		sharedMemRead.c		/home/supraja/Documents/practice/mmaps/sharedMemRead.c
+17		client.c		/home/supraja/Documents/practice/demo_select_iterative_server/src/client.c
+18		server.c		/home/supraja/Documents/practice/demo_select_iterative_server/src/server.c
+19		messageread.c		/home/supraja/Documents/practice/messageread.c
+20		tiger.txt		/home/supraja/Documents/practice/tiger.txt
+21		named_sem.c		/home/supraja/Documents/practice/named_semaphores/named_sem.c
+22		shr1.c		/home/supraja/Documents/practice/shmem/src/shr1.c
+23		shw1.c		/home/supraja/Documents/practice/shmem/src/shw1.c
+24		reader.c		/home/supraja/Documents/practice/posix_mq/MQ_POSIX/reader.c
+25		writer.c		/home/supraja/Documents/practice/posix_mq/MQ_POSIX/writer.c
+26		sender.c		/home/supraja/Documents/practice/posix_mq/sender.c
+27		receiver.c		/home/supraja/Documents/practice/posix_mq/receiver.c
+28		uploads.csv		/home/supraja/Documents/Detecting Spam Email With Machine Learning/SOURCE CODE/Detecting Spam Email/DataExploration/uploads.csv
+29		1464.1bf98a5939c5dccf46f3e7c482e7e906		/home/supraja/Documents/Detecting Spam Email With Machine Learning/SOURCE CODE/Detecting Spam Email/DataExploration/dataset/easy_ham/1464.1bf98a5939c5dccf46f3e7c482e7e906
+30		client.c		/home/supraja/Documents/CAPG/TCP/src/client.c
+31		server.c		/home/supraja/Documents/CAPG/TCP/src/server.c
+32		client.c		/home/supraja/Documents/CAPG/TCP (copy)/src/client.c
+33		server.c		/home/supraja/Documents/CAPG/TCP (copy)/src/server.c
+34		client.c		/home/supraja/Documents/CAPG/UDP/client.c
+35		server.c		/home/supraja/Documents/CAPG/UDP/server.c
+36		msgq_send.c		/home/supraja/Documents/CAPG/message_queues/msgq_send.c
+37		msgq_recv.c		/home/supraja/Documents/CAPG/message_queues/msgq_recv.c
